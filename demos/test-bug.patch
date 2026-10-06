@@ -1,0 +1,13 @@
+diff --git a/tests/test_cart.py b/tests/test_cart.py
+index f24cffb..b42e960 100644
+--- a/tests/test_cart.py
++++ b/tests/test_cart.py
+@@ -6,7 +6,7 @@ def test_total_without_discount():
+ 
+ 
+ def test_total_with_discount():
+-    assert total([1000, 500], discount_percent=10) == 1350
++    assert total([1000, 500], discount_percent=10) == 1300
+ 
+ 
+ def test_total_of_an_empty_cart():

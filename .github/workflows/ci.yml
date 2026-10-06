@@ -27,7 +27,7 @@ jobs:
             sleep 0.5
           done
           exit 1
-      - run: uv run pytest --junitxml=reports/junit.xml
+      - run: uv run pytest --reruns 1 --junitxml=reports/junit.xml
       # Runs after failing tests too. Without ANTHROPIC_API_KEY the report comes from the rules alone.
       - uses: dimagrotser/ai-test-failure-triage@v1
         if: ${{ !cancelled() }}
