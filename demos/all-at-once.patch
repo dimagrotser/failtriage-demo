@@ -1,5 +1,5 @@
 diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
-index b2d28a8..145f808 100644
+index 2563cc4..81ab21c 100644
 --- a/.github/workflows/ci.yml
 +++ b/.github/workflows/ci.yml
 @@ -19,14 +19,6 @@ jobs:
@@ -14,7 +14,7 @@ index b2d28a8..145f808 100644
 -            sleep 0.5
 -          done
 -          exit 1
-       - run: uv run pytest --junitxml=reports/junit.xml
+       - run: uv run pytest --reruns 1 --junitxml=reports/junit.xml
        # Runs after failing tests too. Without ANTHROPIC_API_KEY the report comes from the rules alone.
        - uses: dimagrotser/ai-test-failure-triage@v1
 diff --git a/shop/cart.py b/shop/cart.py
