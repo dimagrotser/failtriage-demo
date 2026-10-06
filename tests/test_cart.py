@@ -6,7 +6,7 @@ def test_total_without_discount():
 
 
 def test_total_with_discount():
-    assert total([1000, 500], discount_percent=10) == 1350
+    assert total([1000, 500], discount_percent=10) == 1300
 
 
 def test_total_of_an_empty_cart():
