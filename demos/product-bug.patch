@@ -1,0 +1,12 @@
+diff --git a/shop/cart.py b/shop/cart.py
+index fd3b9c3..90ce155 100644
+--- a/shop/cart.py
++++ b/shop/cart.py
+@@ -1,4 +1,7 @@
+ def total(prices_cents: list[int], discount_percent: int = 0) -> int:
+     """Price of a cart in cents after a percentage discount, rounded down."""
+     subtotal = sum(prices_cents)
++    average = subtotal // len(prices_cents)
++    if discount_percent * average < 0:
++        raise ValueError("negative discount")
+     return subtotal - subtotal * discount_percent // 100
