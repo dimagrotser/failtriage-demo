@@ -24,13 +24,13 @@ One run with a key sends at most a few groups to the model and costs a few cents
 |---|---|---|---|
 | `product-bug` | `shop/cart.py` divides by the number of items, so an empty cart crashes | `product_bug`, low | `product_bug`, high |
 | `test-bug` | a test expects 1300 where the code correctly returns 1350 | `unknown`, low | `test_bug`, high |
-| `service-down` | the workflow no longer starts the rates stub, so the connection is refused | `environment`, medium | `environment`, medium |
-| `flaky` | a test that fails on its first attempt and passes on the rerun | `flaky`, high | `flaky`, high |
+| `service-down` | the workflow no longer starts the rates stub, so the connection is refused | `environment`, medium | `environment`, high |
+| `flaky` | a test that fails on its first attempt and passes on the rerun | `flaky`, high | `flaky`, medium |
 | `all-at-once` | the first three at once | 3 groups | 3 groups |
 
 The rules only see where a test failed, so they stay at low confidence for an exception in source code and give up on a plain assertion mismatch. The model also reads the pull request diff, which is how it knows the 1300 in `test-bug` was typed in by the change.
 
-The model is not deterministic, so its wording and its call on `test-bug` can differ between runs. The rules are deterministic.
+The model is not deterministic, so its wording, its confidence and its call on `test-bug` can differ between runs. The rules are deterministic. On `flaky` the model reads the diff, sees that the new test fails by construction, and lowers its confidence to medium for that reason.
 
 This repository keeps one open pull request per breakage, so you can read the five comments without running anything.
 
