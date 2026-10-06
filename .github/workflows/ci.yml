@@ -19,14 +19,6 @@ jobs:
           version: "0.11.6"
       - run: uv sync --locked
       - run: uv run ruff check .
-      - name: Start the rates stub
-        run: |
-          uv run python -m shop.stub &
-          for _ in $(seq 20); do
-            curl -sf http://127.0.0.1:8099/rates > /dev/null && exit 0
-            sleep 0.5
-          done
-          exit 1
       - run: uv run pytest --junitxml=reports/junit.xml
       # Runs after failing tests too. Without ANTHROPIC_API_KEY the report comes from the rules alone.
       - uses: dimagrotser/ai-test-failure-triage@v1
