@@ -25,13 +25,14 @@ One run with a key sends at most a few groups to the model and costs a few cents
 | `product-bug` | `shop/cart.py` divides by the number of items, so an empty cart crashes | `product_bug`, low | `product_bug`, high |
 | `test-bug` | a test expects 1300 where the code correctly returns 1350 | `unknown`, low | `test_bug`, high |
 | `service-down` | the workflow no longer starts the rates stub, so the connection is refused | `environment`, medium | `environment`, medium |
-| `all-at-once` | all three at once | 3 groups | 3 groups |
+| `flaky` | a test that fails on its first attempt and passes on the rerun | `flaky`, high | `flaky`, high |
+| `all-at-once` | the first three at once | 3 groups | 3 groups |
 
 The rules only see where a test failed, so they stay at low confidence for an exception in source code and give up on a plain assertion mismatch. The model also reads the pull request diff, which is how it knows the 1300 in `test-bug` was typed in by the change.
 
 The model is not deterministic, so its wording and its call on `test-bug` can differ between runs. The rules are deterministic.
 
-This repository keeps one open pull request per breakage, so you can read the four comments without running anything.
+This repository keeps one open pull request per breakage, so you can read the five comments without running anything.
 
 ## What the report says on a fresh copy
 
@@ -51,6 +52,6 @@ The stub stands in for a rates service on port 8099. Stop it with `kill %1`.
 
 The breakages are patches and not branches because GitHub gives every branch of a template copy its own history, so a pull request from one of them into `main` is refused.
 
-There is no flaky branch. The usual way to show a flaky test is a plugin such as `pytest-rerunfailures`, but it writes the failed first attempt into the JUnit XML as a passed test, so failtriage cannot see the retry. I left that case out instead of faking it.
+The `flaky` breakage depends on the CI running pytest with `--reruns 1`, from `pytest-rerunfailures`. That plugin writes the failed first attempt into the JUnit report as a test with no outcome, and failtriage v1.0.1 and later read it. A rerun plugin that leaves the failed attempt out of the report, like `pytest-retry`, cannot be seen: its retried tests look like plain passes. The test fails on purpose by reading the attempt number, so it stands in for a race and is not a real one.
 
 The workflow asks for `pull-requests: write`, `actions: read` and `contents: read`, nothing more. On pull requests from forks GitHub hands out a read-only token and no secrets, so there the report goes to the job summary and only the rules run.
