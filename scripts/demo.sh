@@ -21,7 +21,8 @@ base=$(git symbolic-ref --short HEAD)
 message=$(cat "demos/$name.msg")
 git checkout -b "demo/$name"
 git apply "demos/$name.patch"
-git commit -qam "$message"
+git add -A
+git commit -qm "$message"
 git push -u origin "demo/$name"
 gh pr create --base "$base" --head "demo/$name" --title "$message" \
   --body "Opened by scripts/demo.sh to try failtriage."
