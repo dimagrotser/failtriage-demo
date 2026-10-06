@@ -1,0 +1,44 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index b2d28a8..145f808 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -19,14 +19,6 @@ jobs:
+           version: "0.11.6"
+       - run: uv sync --locked
+       - run: uv run ruff check .
+-      - name: Start the rates stub
+-        run: |
+-          uv run python -m shop.stub &
+-          for _ in $(seq 20); do
+-            curl -sf http://127.0.0.1:8099/rates > /dev/null && exit 0
+-            sleep 0.5
+-          done
+-          exit 1
+       - run: uv run pytest --junitxml=reports/junit.xml
+       # Runs after failing tests too. Without ANTHROPIC_API_KEY the report comes from the rules alone.
+       - uses: dimagrotser/ai-test-failure-triage@v1
+diff --git a/shop/cart.py b/shop/cart.py
+index fd3b9c3..90ce155 100644
+--- a/shop/cart.py
++++ b/shop/cart.py
+@@ -1,4 +1,7 @@
+ def total(prices_cents: list[int], discount_percent: int = 0) -> int:
+     """Price of a cart in cents after a percentage discount, rounded down."""
+     subtotal = sum(prices_cents)
++    average = subtotal // len(prices_cents)
++    if discount_percent * average < 0:
++        raise ValueError("negative discount")
+     return subtotal - subtotal * discount_percent // 100
+diff --git a/tests/test_cart.py b/tests/test_cart.py
+index f24cffb..b42e960 100644
+--- a/tests/test_cart.py
++++ b/tests/test_cart.py
+@@ -6,7 +6,7 @@ def test_total_without_discount():
+ 
+ 
+ def test_total_with_discount():
+-    assert total([1000, 500], discount_percent=10) == 1350
++    assert total([1000, 500], discount_percent=10) == 1300
+ 
+ 
+ def test_total_of_an_empty_cart():
