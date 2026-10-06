@@ -18,12 +18,14 @@ One run with a key sends at most a few groups to the model and costs a few cents
 
 ## The branches
 
-| Branch | What it breaks | What failtriage should say |
-|---|---|---|
-| `demo/product-bug` | `shop/cart.py` divides by the number of items, so an empty cart crashes | `product_bug`, low confidence. The failing frame is in source code, but the rules never go above low for that |
-| `demo/test-bug` | a test expects 1300 where the code correctly returns 1350 | `unknown` from the rules. With a key the model sees the diff and may call it `test_bug` |
-| `demo/service-down` | the workflow no longer starts the rates stub, so the connection is refused | `environment`, medium confidence |
-| `demo/all-at-once` | all three at once | 3 groups in one comment |
+| Branch | What it breaks | Rules only | With a key |
+|---|---|---|---|
+| `demo/product-bug` | `shop/cart.py` divides by the number of items, so an empty cart crashes | `product_bug`, low | `product_bug`, high |
+| `demo/test-bug` | a test expects 1300 where the code correctly returns 1350 | `unknown`, low | `test_bug`, high |
+| `demo/service-down` | the workflow no longer starts the rates stub, so the connection is refused | `environment`, medium | `environment`, medium |
+| `demo/all-at-once` | all three at once | 3 groups | 3 groups |
+
+The rules only see where a test failed, so they stay at low confidence for an exception in source code and give up on a plain assertion mismatch. The model also reads the pull request diff, which is how it knows the 1300 in `demo/test-bug` was typed in by the change.
 
 The model is not deterministic, so its wording and its call on `demo/test-bug` can differ between runs. The rules are deterministic.
 
